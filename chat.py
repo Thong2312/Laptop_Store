@@ -1,9 +1,10 @@
-"""Chatbot tư vấn. Chọn nhà cung cấp bằng biến môi trường CHAT_PROVIDER:
-   gemini  - Google AI Studio (GEMINI_API_KEY hoặc GOOGLE_API_KEY; tùy chọn GEMINI_MODEL)
-   claude  - Claude API (ANTHROPIC_API_KEY; tùy chọn CLAUDE_MODEL)
-   local   - máy chủ tương thích OpenAI chạy local, vd vLLM/SGLang/Ollama (LOCAL_LLM_URL, LOCAL_MODEL)
+"""Chatbot tư vấn:
+   gemini  - Google AI Studio 
+   claude  - Claude API (ANTHROPIC_API_KEY)
+   local   - máy chủ tương thích OpenAI chạy local
    offline - luật đơn giản, không cần mô hình
-Bỏ trống: tự chọn theo thứ tự gemini > claude > local nếu có khóa/địa chỉ tương ứng, còn lại offline."""
+"""
+
 import json, os, re, threading, time, urllib.error, urllib.request
 import db
 
