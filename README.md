@@ -43,7 +43,7 @@ Khách có thể nhắn cho trợ lý, ví dụ: "thêm Asus Zenbook 14 OLED và
 - Chatbot chỉ thêm/xóa trong giỏ; việc đặt hàng vẫn bắt buộc đăng nhập.
 
 ## Phụ kiện công nghệ và bán kèm (cross-sell)
-- Bảng products có cột category (laptop | accessory). 9 phụ kiện mẫu (chuột, bàn phím, sạc, tai nghe, balo, hub, đế tản nhiệt, SSD). Ảnh dùng placeholder, thay trong Quản trị.
+- Bảng products có cột category (laptop | accessory).
 - Trang chủ có mục **Phụ kiện công nghệ** (/?cat=accessory). Trang laptop có mục "Phụ kiện đi kèm", xếp theo nhóm nhu cầu trùng với máy.
 - Chatbot gợi ý 1-2 phụ kiện phù hợp khi khách đã chọn laptop, và thêm phụ kiện vào giỏ như laptop.
 
