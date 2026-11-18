@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set editing = p and p.id is defined %}
+{% block title %}{{ 'Sửa' if editing else 'Thêm' }} sản phẩm - LaptopS{% endblock %}
+{% block content %}
+<section class="auth wide-form">
+  <h1>{{ 'Sửa sản phẩm' if editing else 'Thêm sản phẩm mới' }}</h1>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <label>Loại sản phẩm<select name="category"><option value="laptop" {{ 'selected' if not p or p.category != 'accessory' }}>Laptop</option><option value="accessory" {{ 'selected' if p and p.category == 'accessory' }}>Phụ kiện công nghệ</option></select></label>
+    <div class="two">
+      <label>Hãng<input name="brand" value="{{ p.brand if p else '' }}" maxlength="40" list="brandList" required></label>
+      <label>Tên sản phẩm<input name="name" value="{{ p.name if p else '' }}" maxlength="80" required></label>
+    </div>
+    <label>Cấu hình <small>(ngăn cách bằng dấu |, ví dụ: Core i5 | RTX 4050 | 16GB | 512GB | 144Hz)</small>
+      <textarea name="spec" rows="3" maxlength="300" required>{{ p.spec if p else '' }}</textarea></label>
+    <div class="two">
+      <label>Giá bán (₫)<input type="number" name="price" min="1" step="1000" value="{{ p.price if p else '' }}" required></label>
+      <label>Giá gốc (₫)<input type="number" name="old" min="1" step="1000" value="{{ p.old if p else '' }}" required></label>
+    </div>
+    <fieldset><legend>Phù hợp với nhu cầu <small>(phụ kiện: dùng để gợi ý bán kèm theo laptop cùng nhu cầu)</small></legend>
+      {% for k, v in needs.items() %}<label class="ck"><input type="checkbox" name="tags" value="{{ k }}" {{ 'checked' if p and k in p.tags }}> {{ v }}</label>{% endfor %}
+    </fieldset>
+    <label>Ảnh sản phẩm <small>(PNG, JPG hoặc WEBP, tối đa 3MB{{ '; bỏ trống để giữ ảnh hiện tại' if editing }})</small>
+      <input type="file" name="image" accept="image/png,image/jpeg,image/webp"></label>
+    {% if editing and p.image %}<div class="cur-img"><img src="{{ p.image }}" alt="Ảnh hiện tại"><span>Ảnh hiện tại</span></div>{% endif %}
+    <div class="two">
+      <button class="cta wide">{{ 'Lưu thay đổi' if editing else 'Thêm sản phẩm' }}</button>
+      <a class="cta wide ghost" href="{{ url_for('admin_products') }}">Hủy</a>
+    </div>
+  </form>
+  <datalist id="brandList">{% for b in ['Asus','HP','Acer','Lenovo','MSI','Dell','Logitech','Keychron','Anker','Sony'] %}<option value="{{ b }}">{% endfor %}</datalist>
+</section>
+{% endblock %}

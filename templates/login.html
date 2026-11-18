@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập - LaptopS{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>Đăng nhập</h1>
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label>Email<input type="email" name="email" value="{{ form.get('email', '') }}" autocomplete="email" required autofocus></label>
+    <label>Mật khẩu<input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="cta wide">Đăng nhập</button>
+  </form>
+  <p class="alt">Chưa có tài khoản? <a href="{{ url_for('register') }}">Đăng ký ngay</a></p>
+</section>
+{% endblock %}

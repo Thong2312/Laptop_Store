@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Quản lý đơn hàng - LaptopS{% endblock %}
+{% block content %}
+<nav class="tabs"><a href="{{ url_for('admin_products') }}">Sản phẩm</a><a class="on" href="{{ url_for('admin_orders') }}">Đơn hàng</a><a href="{{ url_for('admin_funnel') }}">Phễu chuyển đổi</a></nav>
+<div class="adm-head"><h1>Tất cả đơn hàng <small>({{ total }})</small></h1></div>
+
+<form class="box ofilter" method="get" action="{{ url_for('admin_orders') }}">
+  <input name="q" value="{{ q }}" placeholder="Tìm theo mã đơn, tên, SĐT hoặc email" maxlength="60">
+  <select name="pay" aria-label="Lọc thanh toán">
+    {% for v, label in [('', 'Tất cả thanh toán'), ('cod', 'COD'), ('paid', 'PayPal - đã thanh toán'), ('pending', 'PayPal - chờ xác nhận'), ('failed', 'PayPal - thất bại'), ('review', 'PayPal - cần kiểm tra')] %}
+      <option value="{{ v }}" {{ 'selected' if v == pay }}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn-s">Lọc</button>
+  {% if q or pay %}<a class="btn-s" href="{{ url_for('admin_orders') }}">Xóa lọc</a>{% endif %}
+</form>
+
+<div class="box tbl-wrap">
+  <table class="adm">
+    <thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Khách hàng</th><th>SĐT</th><th>Tổng tiền</th><th>Thanh toán</th><th></th></tr></thead>
+    <tbody>
+    {% for o in orders %}
+      {% set b = pay_badge(o, true) %}
+      <tr>
+        <td><a href="{{ url_for('order_view', oid=o.id) }}"><b>#{{ o.id }}</b></a></td>
+        <td class="num">{{ o.created_at|dt }}</td>
+        <td>{{ o.name }}{% if o.user_id %}<div class="sp">{{ o.user_email }}</div>{% else %}<div class="sp">Khách vãng lai</div>{% endif %}</td>
+        <td class="num">{{ o.phone }}</td>
+        <td class="num"><b>{{ o.total|vnd }}</b><div class="sp">{{ o.n_items }} sản phẩm</div></td>
+        <td><span class="st {{ b[1] }}">{{ b[0] }}</span></td>
+        <td class="act"><a class="btn-s" href="{{ url_for('order_view', oid=o.id) }}">Chi tiết</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="empty">Không có đơn hàng nào khớp.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if pages > 1 %}
+<nav class="pager">
+  {% if page > 1 %}<a class="btn-s" href="{{ url_for('admin_orders', q=q, pay=pay, page=page - 1) }}">‹ Trước</a>{% endif %}
+  <span>Trang {{ page }} / {{ pages }}</span>
+  {% if page < pages %}<a class="btn-s" href="{{ url_for('admin_orders', q=q, pay=pay, page=page + 1) }}">Sau ›</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

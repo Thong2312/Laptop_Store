@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}LaptopS - Laptop chính hãng, giá tốt{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="head">
+  <a class="logo" href="/">Laptop Store</a>
+  <form class="search" id="searchForm"><span>🔍</span><input id="q" placeholder="Bạn muốn mua laptop nào hôm nay?" autocomplete="off"></form>
+  <div class="right">
+  {% if me %}
+  <span class="acct"><span class="hi">Xin chào, <b>{{ me.name }}</b></span>{% if me.role == 'admin' %}<a class="pill" href="{{ url_for('admin_orders') }}">Đơn hàng</a><a class="pill" href="{{ url_for('admin_products') }}">Quản trị</a>{% else %}<a class="pill" href="{{ url_for('my_orders') }}">Đơn hàng</a>{% endif %}<form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><button class="pill">Đăng xuất</button></form></span>
+  {% else %}
+  <span class="acct"><a class="pill" href="{{ url_for('login') }}">Đăng nhập</a><a class="pill" href="{{ url_for('register') }}">Đăng ký</a></span>
+  {% endif %}
+  <button class="pill" id="cartBtn">Giỏ hàng 🛒 <span class="badge" id="cnt">0</span></button>
+  </div>
+</header>
+<main class="wrap">{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}{% block content %}{% endblock %}</main>
+<div id="ov"></div>
+<aside id="drawer"><div class="dh"><b>Giỏ hàng của bạn</b><button id="close" aria-label="Đóng">×</button></div><div id="items"></div><div class="df"><input id="cname" placeholder="Họ và tên" autocomplete="name"><input id="cphone" placeholder="Số điện thoại" autocomplete="tel" inputmode="tel"><div class="tot"><span>Tạm tính</span><b id="total">0 ₫</b></div><button class="cta wide" id="co">Đặt hàng (thanh toán khi nhận hàng)</button>{% if not me %}<p class="ppnote">Bạn cần <a href="{{ url_for('login', next=request.full_path.rstrip('?')) }}">đăng nhập</a> để đặt hàng.</p>{% endif %}{% if paypal_client_id %}<div class="or"><span>hoặc thanh toán online</span></div><div id="paypal-buttons"></div><p class="ppnote" id="ppnote"></p>{% endif %}</div></aside>
+<button id="chatFab" aria-label="Mở trợ lý tư vấn">💬 Tư vấn</button>
+<section id="chat" aria-label="Trợ lý tư vấn laptop" data-product="{{ p.id if p is defined else '' }}" data-name="{{ (p.brand ~ ' ' ~ p.name) if p is defined else '' }}"><div class="dh"><b>Trợ lý LaptopS</b><button id="chatClose" aria-label="Đóng">×</button></div>
+<div id="msgs"></div><form id="chatForm"><input id="chatIn" placeholder="Hỏi về laptop, ngân sách, nhu cầu..." maxlength="500" autocomplete="off"><button>Gửi</button></form></section>
+<div id="toast"></div>
+{% if paypal_client_id %}<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id|urlencode }}&currency=USD&intent=capture&components=buttons" data-sdk-integration-source="developer-studio"></script>{% endif %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

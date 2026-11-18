@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ p.brand }} {{ p.name }} - LaptopS{% endblock %}
+{% block content %}
+<nav class="crumb"><a href="/">Trang chủ</a> › <a href="/?brand={{ p.brand }}">{{ p.brand }}</a> › <span>{{ p.name }}</span></nav>
+<section class="pd">
+  <div class="pd-img"><img src="{{ p.image }}" alt="{{ p.brand }} {{ p.name }}"></div>
+  <div class="pd-info">
+    <span class="br">{{ p.brand }}</span>
+    <h1>{{ p.name }}</h1>
+    {% if me and me.role == 'admin' %}<a class="admin-link" href="{{ url_for('admin_edit', pid=p.id) }}">✎ Sửa sản phẩm này</a>{% endif %}
+    <div class="pd-price"><b>{{ p.price|vnd }}</b><s>{{ p.old|vnd }}</s><span class="off2">-{{ pct }}%</span></div>
+    <p class="sp">Phù hợp với:</p>
+    <div class="tags">{% for t in p.tags %}<a class="tag" href="/?need={{ t }}">{{ needs[t] }}</a>{% endfor %}</div>
+    <div class="buy">
+      <div class="q"><button type="button" id="qm" aria-label="Giảm">−</button><input id="qty" value="1" inputmode="numeric" aria-label="Số lượng"><button type="button" id="qp" aria-label="Tăng">+</button></div>
+      <button class="add big" data-id="{{ p.id }}" data-detail="1">Thêm vào giỏ</button>
+      <button class="add big alt" data-id="{{ p.id }}" data-detail="1" data-buy="1">Mua ngay</button>
+    </div>
+  </div>
+</section>
+<section class="box"><h2>Thông số kỹ thuật</h2>
+  <table class="spec">{% for k, v in specs %}<tr><th>{{ k }}</th><td>{{ v }}</td></tr>{% endfor %}</table>
+</section>
+{% if acc %}
+<h2 class="count">Phụ kiện đi kèm <a class="more" href="/?cat=accessory">Xem tất cả phụ kiện ›</a></h2>
+<div class="grid">{% for x in acc %}
+  <div class="card"><a class="img" href="/product/{{ x.id }}"><img src="{{ x.image }}" alt="{{ x.brand }} {{ x.name }}" loading="lazy"></a>
+    <a class="nm" href="/product/{{ x.id }}">{{ x.brand }} {{ x.name }}</a><div class="sp">{{ x.spec }}</div>
+    <div class="pr">{{ x.price|vnd }}</div><button class="add" data-id="{{ x.id }}">Thêm vào giỏ</button></div>
+{% endfor %}</div>
+{% endif %}
+<h2 class="count">Sản phẩm tương tự</h2>
+<div class="grid">{% for x in related %}
+  <div class="card"><a class="img" href="/product/{{ x.id }}"><img src="{{ x.image }}" alt="{{ x.brand }} {{ x.name }}" loading="lazy"></a>
+    <a class="nm" href="/product/{{ x.id }}">{{ x.brand }} {{ x.name }}</a><div class="sp">{{ x.spec }}</div>
+    <div class="pr">{{ x.price|vnd }}</div><button class="add" data-id="{{ x.id }}">Thêm vào giỏ</button></div>
+{% endfor %}</div>
+{% endblock %}

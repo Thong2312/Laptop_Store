@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Đơn hàng #{{ o.id }} - LaptopS{% endblock %}
+{% block content %}
+{% set b = pay_badge(o, me.role == 'admin') %}
+<nav class="crumb">{% if me.role == 'admin' %}<a href="{{ url_for('admin_orders') }}">Tất cả đơn hàng</a>{% else %}<a href="{{ url_for('my_orders') }}">Đơn hàng của tôi</a>{% endif %} › <span>#{{ o.id }}</span></nav>
+<div class="adm-head"><h1>Đơn hàng #{{ o.id }} <span class="st {{ b[1] }}">{{ b[0] }}</span></h1></div>
+
+<div class="od-grid">
+  <section class="box">
+    <h2 class="h2s">Sản phẩm</h2>
+    <table class="adm">
+      <thead><tr><th></th><th>Sản phẩm</th><th>Đơn giá</th><th>SL</th><th>Thành tiền</th></tr></thead>
+      <tbody>
+      {% for i in o['items'] %}
+        <tr>
+          <td>{% if i.image %}<img src="{{ i.image }}" alt="" loading="lazy">{% endif %}</td>
+          <td>{% if i.name %}<a href="{{ url_for('product', pid=i.product_id) }}"><b>{{ i.brand }}</b> {{ i.name }}</a>{% else %}<span class="sp">Sản phẩm đã bị gỡ</span>{% endif %}</td>
+          <td class="num">{{ i.unit_price|vnd }}</td>
+          <td>{{ i.qty }}</td>
+          <td class="num"><b>{{ (i.unit_price * i.qty)|vnd }}</b></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="od-total"><span>Tổng cộng</span><b>{{ o.total|vnd }}</b></div>
+  </section>
+
+  <aside class="box">
+    <h2 class="h2s">Thông tin đơn hàng</h2>
+    <dl class="kv">
+      <dt>Ngày đặt</dt><dd>{{ o.created_at|dt }} <small>(giờ VN)</small></dd>
+      <dt>Người nhận</dt><dd>{{ o.name }}</dd>
+      <dt>Số điện thoại</dt><dd>{{ o.phone }}</dd>
+      <dt>Thanh toán</dt><dd>{{ 'PayPal' if o.payment_method == 'paypal' else 'Thanh toán khi nhận hàng (COD)' }}</dd>
+      {% if o.payment_method == 'paypal' %}
+        {% if o.total_usd %}<dt>Số tiền PayPal</dt><dd>${{ o.total_usd }} USD</dd>{% endif %}
+        {% if o.paypal_capture_id %}<dt>Mã giao dịch</dt><dd><code>{{ o.paypal_capture_id }}</code></dd>{% endif %}
+        {% if me.role == 'admin' and o.paypal_order_id %}<dt>Mã đơn PayPal</dt><dd><code>{{ o.paypal_order_id }}</code></dd>{% endif %}
+      {% endif %}
+      {% if me.role == 'admin' %}
+        <dt>Tài khoản đặt</dt>
+        <dd>{% if o.user_id %}{{ o.user_name }}<br><small>{{ o.user_email }}</small>{% else %}<span class="sp">Khách vãng lai</span>{% endif %}</dd>
+      {% endif %}
+    </dl>
+  </aside>
+</div>
+{% endblock %}

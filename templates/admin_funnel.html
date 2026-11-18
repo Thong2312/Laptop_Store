@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Phễu chuyển đổi - LaptopS{% endblock %}
+{% macro funnel(rows, rev) %}
+<table class="adm">
+  <thead><tr><th>Giai đoạn</th><th class="num">Phiên</th><th class="num">So với bước trước</th><th class="num">So với Visit</th><th></th></tr></thead>
+  <tbody>{% for r in rows %}<tr><td>{{ r.label }}</td><td class="num"><b>{{ r.n }}</b></td>
+    <td class="num">{{ '%.1f%%' % r.pct_prev if r.pct_prev is not none else '-' }}</td>
+    <td class="num">{{ '%.1f%%' % r.pct_top if r.pct_top is not none else '-' }}</td>
+    <td style="width:35%"><div class="bar"><i style="width: {{ r.pct_top or 0 }}%"></i></div></td></tr>{% endfor %}</tbody>
+</table>
+<p class="sp">Doanh thu từ các phiên hoàn tất đơn: <b>{{ rev|vnd }}</b></p>
+{% endmacro %}
+{% block content %}
+<nav class="tabs"><a href="{{ url_for('admin_products') }}">Sản phẩm</a><a href="{{ url_for('admin_orders') }}">Đơn hàng</a><a class="on" href="{{ url_for('admin_funnel') }}">Phễu chuyển đổi</a></nav>
+<div class="adm-head"><h1>Phễu chuyển đổi <small>({{ s.sessions }} phiên khách, không tính admin)</small></h1></div>
+<p class="sp">Mỗi phiên chỉ được tính ở một bước nếu đã qua các bước trước. Phiên "dùng chat" là phiên đã gửi ít nhất một tin nhắn cho trợ lý.</p>
+<section class="box tbl-wrap"><h2>Toàn cửa hàng</h2>{{ funnel(s.all, s.all_rev) }}</section>
+<section class="box tbl-wrap"><h2>Phiên có dùng chat ({{ s.chat[0].n }})</h2>{{ funnel(s.chat, s.chat_rev) }}</section>
+<section class="box tbl-wrap"><h2>Phiên không dùng chat ({{ s.plain[0].n }})</h2>{{ funnel(s.plain, s.plain_rev) }}</section>
+<section class="box tbl-wrap"><h2>Chỉ số chat</h2>
+  <table class="adm"><tbody>
+    <tr><td>Phiên mở khung chat</td><td class="num">{{ s.chat_opened }}</td></tr>
+    <tr><td>Phiên gửi ít nhất 1 tin nhắn</td><td class="num">{{ s.chat_engaged }}</td></tr>
+    <tr><td>Tổng số tin nhắn của khách</td><td class="num">{{ s.messages }}</td></tr>
+    <tr><td>Phiên có sản phẩm được thêm vào giỏ qua chat</td><td class="num">{{ s.chat_cart_sessions }}</td></tr>
+    <tr><td>Phiên xem trang chi tiết sản phẩm</td><td class="num">{{ s.product_views }}</td></tr>
+  </tbody></table></section>
+{% endblock %}
