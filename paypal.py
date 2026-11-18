@@ -1,12 +1,5 @@
-"""Thanh toán PayPal (Orders v2, intent CAPTURE). Mặc định chạy ở môi trường SANDBOX.
-
-Biến môi trường:
-  PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET   Lấy ở https://developer.paypal.com > Apps & Credentials > Sandbox
-  PAYPAL_MODE                              "sandbox" (mặc định) hoặc "live"
+"""Thanh toán PayPal (Orders v2, intent CAPTURE).
   PAYPAL_USD_VND_RATE                      Tỷ giá quy đổi, mặc định 25000 (1 USD = 25.000 ₫)
-
-PayPal không hỗ trợ VND nên số tiền được quy đổi sang USD ở phía server.
-Khóa bí mật (SECRET) chỉ nằm ở server, không bao giờ gửi xuống trình duyệt.
 """
 import base64, json, os, threading, time, urllib.error, urllib.parse, urllib.request
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
